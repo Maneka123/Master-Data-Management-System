@@ -32,7 +32,40 @@
       <td>{{$brand->name}}</td>
       <td>{{$brand->status}}</td>
       <td><a href="{{route('brands.edit', $brand->id)}}"><i class="fas fa-edit"></i></a></td>
+      <td><!-- Trigger -->
+<a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $brand->id }}">
+    <i class="fas fa-trash"></i>
+</a>
+<!--modal code-->
+    <!-- Modal -->
+
+    <!--end modal code-->
+    </td>
     </tr>
+    <!--modal code-->
+    <!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal{{ $brand->id }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ $brand->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ route('brands.destroy', $brand->id) }}" method="POST">
+      @csrf
+      @method('DELETE')
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel{{ $brand->id }}">Delete Brand</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete the brand <strong>{{ $brand->name }}</strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
     @endforeach
     @else
     <td>No departments to display</td>
