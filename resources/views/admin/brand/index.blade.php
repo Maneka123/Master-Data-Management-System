@@ -9,6 +9,9 @@
                     <li class="breadcrumb-item active" aria-current="page">All Brands</li>
                 </ol>
             </nav>
+             @if(Session::has('message'))
+                <div class="alert alert-success">{{Session::get('message')}}</div>
+                @endif
             <table class="table table-dark table-striped">
   <thead>
     <tr>
@@ -28,6 +31,7 @@
       <td>{{$brand->code}}</td>
       <td>{{$brand->name}}</td>
       <td>{{$brand->status}}</td>
+      <td><a href="{{route('brands.edit', $brand->id)}}"><i class="fas fa-edit"></i></a></td>
     </tr>
     @endforeach
     @else
