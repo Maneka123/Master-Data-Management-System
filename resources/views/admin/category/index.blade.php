@@ -9,6 +9,9 @@
                     <li class="breadcrumb-item active" aria-current="page">All Categories</li>
                 </ol>
             </nav>
+             @if(Session::has('message'))
+                <div class="alert alert-success">{{Session::get('message')}}</div>
+                @endif
             <table class="table table-dark table-striped">
   <thead>
     
@@ -29,8 +32,8 @@
       <td>{{$category->code}}</td>
       <td>{{$category->name}}</td>
       <td>{{$category->status}}</td>
-      <td><i class="fas fa-edit"></td>
-      <td><i class="fas fa-trash"></td>
+      <td><a href="{{route('categories.edit',[$category->id])}}"><i class="fas fa-edit"></i></a></td>
+      <td><i class="fas fa-trash"></i></td>
     </tr>
     @endforeach
     @else
