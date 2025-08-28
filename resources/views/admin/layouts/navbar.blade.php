@@ -32,7 +32,12 @@
                         <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="dropdown-item">Logout</button>
+</form>
+
+
                     </ul>
                 </li>
             </ul>
