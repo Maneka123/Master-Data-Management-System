@@ -138,6 +138,8 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $item=Item::find($id);
+        $item->delete();
+        return redirect()->route('items.index')->with('message', 'Item deleted successfully.');
     }
 }

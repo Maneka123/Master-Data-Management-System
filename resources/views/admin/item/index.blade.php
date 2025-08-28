@@ -44,8 +44,33 @@
 </td>
       <td>{{$item->status}}</td>
       <td><a href="{{ route('items.edit', $item->id) }}"><i class="fas fa-edit"></i></a></td>
-      <td><i class="fas fa-trash"></i></td>
+      <td><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal{{ $item->id }}">
+    <i class="fas fa-trash"></i>
+</a></td>
     </tr>
+    <!--modal code-->
+    <div class="modal fade" id="exampleModal{{ $item->id }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ $item->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ route('items.destroy', $item->id) }}" method="POST">
+      @csrf
+      @method('DELETE')
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel{{ $item->id }}">Delete Brand</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete the item <strong>{{ $item->name }}</strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!--end modal code-->
    @endforeach
    @else
    <td>No item to display</td>
