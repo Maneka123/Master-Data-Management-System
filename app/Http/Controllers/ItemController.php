@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Item;
+use App\Models\Brand;
 use App\Models\Category;
-class CategoryController extends Controller
+class ItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,8 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories=Category::paginate(2);
-        return view('admin.category.index',compact('categories'));
+        //
     }
 
     /**
@@ -24,7 +25,10 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.category.create');
+        $brands = Brand::all(); // or ->pluck('name', 'id') if you want key-value pairs
+        $categories = Category::all();
+
+        return view('admin.item.create', compact('brands', 'categories'));
     }
 
     /**
@@ -35,17 +39,27 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-        'code' => 'required|unique:categories,code',
-        'name' => 'required|string|max:255',
-        'status' => 'required|in:Active,Inactive',
+         // Step 1: Validate input
+    $validated = $request->validate([
+        'brand_id'    => 'required|exists:brands,id',
+        'category_id' => 'required|exists:categories,id',
+        'code'        => 'required|string|unique:items,code',
+        'name'        => 'required|string|max:255',
+        'attachment'  => 'nullable|file|mimes:jpg,jpeg,png,pdf,docx|max:2048', // max 2MB
+        'status'      => 'required|in:Active,Inactive',
     ]);
 
-    // ✅ Store the data
-    Category::create($validated);
+    // Step 2: Handle file upload if present
+    if ($request->hasFile('attachment')) {
+        $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+        $validated['attachment'] = $attachmentPath;
+    }
 
-    // ✅ Redirect back with a success message
-    return redirect()->back()->with('message', 'Category created successfully!');
+    // Step 3: Store item in DB
+    Item::create($validated);
+
+    // Step 4: Redirect with success message
+    return redirect()->back()->with('message', 'Item created successfully.');
     }
 
     /**
@@ -67,8 +81,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        $category=Category::find($id);
-        return view('admin.category.edit',compact('category'));
+        //
     }
 
     /**
@@ -80,10 +93,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category=Category::find($id);
-        $data=$request->all();
-        $category->update($data);
-        return redirect()->route('categories.index')->with('message','record updated successfully');
+        //
     }
 
     /**
@@ -94,8 +104,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category=Category::find($id);
-        $category->delete();
-        return redirect()->route('categories.index')->with('message','record deleted successfully');
+        //
     }
 }
