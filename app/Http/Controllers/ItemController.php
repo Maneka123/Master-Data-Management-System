@@ -82,7 +82,10 @@ class ItemController extends Controller
      */
     public function edit($id)
     {
-        //
+        $item=Item::find($id);
+         $brands = Brand::all(); // or ->pluck('name', 'id') if you want key-value pairs
+        $categories = Category::all();
+        return view('admin.item.edit',compact('item','brands','categories'));
     }
 
     /**
@@ -93,9 +96,39 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //
+{
+    $item = Item::findOrFail($id);
+
+    // Step 1: Validate
+    $validated = $request->validate([
+        'brand_id'    => 'required|exists:brands,id',
+        'category_id' => 'required|exists:categories,id',
+        'code'        => 'required|string|unique:items,code,' . $item->id, // ignore current item
+        'name'        => 'required|string|max:255',
+        'attachment'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'status'      => 'required|in:Active,Inactive',
+    ]);
+
+    // Step 2: Handle image upload
+    if ($request->hasFile('attachment')) {
+        // Optional: Delete old image from storage
+        if ($item->attachment && \Storage::disk('public')->exists($item->attachment)) {
+            \Storage::disk('public')->delete($item->attachment);
+        }
+
+        // Store new image
+        $validated['attachment'] = $request->file('attachment')->store('attachments', 'public');
+    } else {
+        // Keep the old image
+        $validated['attachment'] = $item->attachment;
     }
+
+    // Step 3: Update item
+    $item->update($validated);
+
+    // Step 4: Redirect
+    return redirect()->route('items.index')->with('message', 'Item updated successfully.');
+}
 
     /**
      * Remove the specified resource from storage.
